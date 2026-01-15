@@ -4,6 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ./modules/services.nix
     ];
 
   boot.loader.grub.enable = true;
