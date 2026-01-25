@@ -13,8 +13,7 @@ in
     settings = {
       rpc-bind-address = "0.0.0.0";
       rpc-whitelist-enabled = false;
-      rpc-host-whitelist-enabled = true;
-      rpc-host-whitelist = "torrent.local,localhost,127.0.0.1";
+      rpc-host-whitelist-enabled = false;
       download-dir = "/var/lib/media/downloads";
       umask = 2;
     };
