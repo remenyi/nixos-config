@@ -15,6 +15,17 @@
     };
   };
 
+  services.syncthing = {
+    enable = true;
+    openDefaultPorts = true;
+    user = "gergo";
+    group = "users";
+    dataDir = "/home/gergo";
+    configDir = "/home/gergo/.config/syncthing";
+    guiAddress = "127.0.0.1:8384";
+    settings.gui.tls = false;
+  };
+
   users.groups.media = { };
 
   users.users.transmission.extraGroups = [ "media" ];
@@ -33,6 +44,14 @@
       };
       "torrent.local" = {
         extraConfig = "reverse_proxy localhost:9091";
+      };
+      "syncthing.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:8384 {
+            header_up Host localhost
+	  }
+	'';
       };
     };
   };
