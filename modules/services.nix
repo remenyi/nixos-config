@@ -1,6 +1,11 @@
 { config, pkgs, ... }:
 
+let
+  tailscaleIP = "100.93.244.94"; # tailscale ip -4
+in
 {
+  services.tailscale.enable = true;
+
   services.jellyfin.enable = true;
 
   services.transmission = {
@@ -47,22 +52,22 @@
         rewrites = [
 	  {
 	    domain = "jellyfin.ts";
-	    answer = "192.168.0.123";
+	    answer = tailscaleIP;
 	    enabled = true;
 	  }
 	  {
 	    domain = "transmission.ts";
-	    answer = "192.168.0.123";
+	    answer = tailscaleIP;
 	    enabled = true;
 	  }
 	  {
 	    domain = "adguard.ts";
-	    answer = "192.168.0.123";
+	    answer = tailscaleIP;
 	    enabled = true;
 	  }
 	  {
 	    domain = "syncthing.ts";
-	    answer = "192.168.0.123";
+	    answer = tailscaleIP;
 	    enabled = true;
 	  }
 	];
@@ -112,6 +117,9 @@
     };
   };
 
-  networking.firewall.allowedUDPPorts = [ 53 ];
-  networking.firewall.allowedTCPPorts = [ 53 80 443 ];
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ 53 ];
+    allowedTCPPorts = [ 53 80 443 ];
+  };
 }
