@@ -14,7 +14,7 @@ in
       rpc-bind-address = "0.0.0.0";
       rpc-whitelist-enabled = false;
       rpc-host-whitelist-enabled = false;
-      download-dir = "/var/lib/media/downloads";
+      download-dir = "/mnt/storage/torrents";
       umask = 2;
     };
   };
@@ -80,8 +80,8 @@ in
   users.users.jellyfin.extraGroups = [ "media" ];
   
   systemd.tmpfiles.rules = [
-    "d /var/lib/media 0775 root media -"
-    "d /var/lib/media/downloads 0775 transmission media -"
+    "d /mnt/storage/torrents 0775 root media -"
+    "d /mnt/storage/torrents 0775 transmission media -"
   ]; 
 
   services.caddy = {

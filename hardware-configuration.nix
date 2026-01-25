@@ -20,6 +20,12 @@
       autoResize = true;
     };
 
+  fileSystems."/mnt/storage" = {
+    device = "/dev/disk/by-uuid/33cee871-57cc-47c1-a39f-fae271cc3a9a";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" ];
+  };
+
   swapDevices =
     [ { device = "/var/lib/swapfile"; size = 8192; } ];
 
