@@ -12,15 +12,16 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
+  boot.growPartition = true;
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/5ac6bc22-19d3-43ab-a922-1d63e2f166d9";
       fsType = "ext4";
+      autoResize = true;
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/451c436b-887f-4f64-b183-394267785c22"; }
-    ];
+    [ { device = "/var/lib/swapfile"; size = 8192; } ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
