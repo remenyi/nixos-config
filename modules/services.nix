@@ -13,6 +13,109 @@ in
       "/mnt/storage/readeck:/readeck"
     ];
   };
+
+  services.homepage-dashboard = {
+    enable = true;
+    allowedHosts = "homepage.ts";
+    services = [
+      {
+        "Core" = [
+	  {
+            "Caddy" = {
+              icon = "caddy.png";
+              widget = {
+                type = "caddy";
+                url = "http://localhost:2019";
+              };
+            };
+	  }
+          {
+            "AdGuard Home" = {
+              icon = "adguard-home.png";
+              href = "https://adguard.ts";
+              description = "Hálózati reklámszűrő és DNS szerver";
+	      widget = {
+                type = "adguard";
+                url = "http://localhost:3000";
+              };
+            };
+          }
+          {
+            "Tailscale" = {
+              icon = "tailscale.png";
+              description = "Mesh VPN";
+              href = "https://login.tailscale.com/admin/machines";
+            };
+          }
+        ];
+      }
+      {
+        "Média és Letöltés" = [
+          {
+            "Jellyfin" = {
+              icon = "jellyfin.png";
+              href = "https://jellyfin.ts";
+              description = "Saját Netflix";
+            };
+          }
+          {
+            "Transmission" = {
+              icon = "transmission.png";
+              href = "https://transmission.ts";
+              description = "Torrent kliens";
+	      widget = {
+                type = "transmission";
+	        url = "http://localhost:9091";
+	      };
+            };
+          }
+        ];
+      }
+      {
+        "Eszközök" = [
+          {
+            "Readeck" = {
+              icon = "readeck.png";
+              href = "https://readeck.ts";
+              description = "Mentett cikkek és könyvjelzők";
+            };
+          }
+          {
+            "Syncthing" = {
+              icon = "syncthing.png";
+              href = "https://syncthing.ts";
+              description = "Fájlszinkronizálás";
+            };
+          }
+        ];
+      }
+    ];
+    settings = {
+      title = "Gergo Home Server";
+      layout = {
+        "Core" = { style = "grid"; columns = 1; };
+        "Média és Letöltés" = { style = "grid"; columns = 2; };
+        "Eszközök" = { style = "grid"; columns = 3; };
+      };
+    };
+    widgets = [
+      {
+        resources = {
+          cpu = true;
+          memory = true;
+          disk = "/mnt/storage";
+        };
+      }
+      {
+        datetime = {
+          format = {
+            timeStyle = "short";
+            dateStyle = "short";
+          };
+        };
+      }
+    ];
+  };
   
   services.tailscale.enable = true;
 
@@ -89,6 +192,11 @@ in
 	    answer = tailscaleIP;
 	    enabled = true;
 	  }
+	  {
+	    domain = "homepage.ts";
+	    answer = tailscaleIP;
+	    enabled = true;
+	  }
 	];
       };
     };
@@ -138,6 +246,12 @@ in
 	  reverse_proxy localhost:8384 {
             header_up Host localhost
 	  }
+	'';
+      };
+      "homepage.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:8082
 	'';
       };
     };
