@@ -26,6 +26,50 @@
     settings.gui.tls = false;
   };
 
+  services.adguardhome = {
+    enable = true;
+    mutableSettings = false;
+    settings = {
+      schema_version = 32;
+      dns = {
+	bootstrap_dns = [
+	  "8.8.8.8"
+	  "1.1.1.1"
+	];
+	upstream_dns = [
+          "https://dns10.quad9.net/dns-query"
+        ];
+      };
+      filtering = {
+        enabled = true;
+        protection_enabled = true;
+	rewrites_enabled = true;
+        rewrites = [
+	  {
+	    domain = "jellyfin.ts";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	  {
+	    domain = "transmission.ts";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	  {
+	    domain = "adguard.ts";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	  {
+	    domain = "syncthing.ts";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	];
+      };
+    };
+  };
+
   users.groups.media = { };
 
   users.users.transmission.extraGroups = [ "media" ];
@@ -39,11 +83,23 @@
   services.caddy = {
     enable = true;
     virtualHosts = {
-      "jellyfin.local" = {
-        extraConfig = "reverse_proxy localhost:8096";
+      "jellyfin.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:8096
+	'';
       };
-      "torrent.local" = {
-        extraConfig = "reverse_proxy localhost:9091";
+      "transmission.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:9091
+	'';
+      };
+      "adguard.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:3000
+	'';
       };
       "syncthing.ts" = {
         extraConfig = ''
@@ -56,5 +112,6 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedUDPPorts = [ 53 ];
+  networking.firewall.allowedTCPPorts = [ 53 80 443 ];
 }
