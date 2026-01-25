@@ -1,9 +1,19 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   tailscaleIP = "100.93.244.94"; # tailscale ip -4
 in
 {
+  virtualisation.oci-containers.backend = "podman";
+
+  virtualisation.oci-containers.containers."readeck" = {
+    image = "codeberg.org/readeck/readeck:latest";
+    ports = [ "127.0.0.1:8000:8000" ];
+    volumes = [
+      "/mnt/storage/readeck:/readeck"
+    ];
+  };
+  
   services.tailscale.enable = true;
 
   services.jellyfin.enable = true;
@@ -65,6 +75,16 @@ in
 	    enabled = true;
 	  }
 	  {
+	    domain = "readeck.ts";
+	    answer = tailscaleIP;
+	    enabled = true;
+	  }
+	  {
+	    domain = "readeck.home";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	  {
 	    domain = "syncthing.ts";
 	    answer = tailscaleIP;
 	    enabled = true;
@@ -82,6 +102,7 @@ in
   systemd.tmpfiles.rules = [
     "d /mnt/storage/torrents 0775 root media -"
     "d /mnt/storage/torrents 0775 transmission media -"
+    "d /mnt/storage/readeck 0700 root root -"
   ]; 
 
   services.caddy = {
@@ -103,6 +124,12 @@ in
         extraConfig = ''
           tls internal
 	  reverse_proxy localhost:3000
+	'';
+      };
+      "readeck.ts, readeck.home" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:8000
 	'';
       };
       "syncthing.ts" = {
