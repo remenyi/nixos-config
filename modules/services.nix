@@ -14,6 +14,74 @@ in
     ];
   };
 
+  services.gatus = {
+    enable = true;
+    settings = {
+      endpoints = [
+        {
+          name = "AdGuard";
+          url = "https://adguard.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Homepage";
+          url = "https://homepage.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Transmission";
+          url = "https://transmission.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Jellyfin";
+          url = "https://jellyfin.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Readeck";
+          url = "https://readeck.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Syncthing";
+          url = "https://syncthing.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+	  client = {
+	    insecure = true;
+	  };
+        }
+        {
+          name = "Nullpont";
+          url = "https://nullpontmuhely.hu";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+        }
+      ];
+    };
+  };
+
   services.homepage-dashboard = {
     enable = true;
     allowedHosts = "homepage.ts";
@@ -89,13 +157,29 @@ in
           }
         ];
       }
+      {
+        "Monitorozás" = [
+          {
+            "Gatus" = {
+              icon = "gatus.png";
+              href = "https://gatus.ts";
+              description = "Uptime";
+	      widget = {
+                type = "gatus";
+		url = "https://gatus.ts";
+	      };
+            };
+          }
+	];
+      }
     ];
     settings = {
       title = "Gergo Home Server";
       layout = {
         "Core" = { style = "grid"; columns = 1; };
-        "Média és Letöltés" = { style = "grid"; columns = 2; };
-        "Eszközök" = { style = "grid"; columns = 3; };
+        "Média és Letöltés" = { style = "grid"; columns = 1; };
+        "Eszközök" = { style = "grid"; columns = 1; };
+        "Monitorozás" = { style = "grid"; columns = 1; };
       };
     };
     widgets = [
@@ -197,6 +281,11 @@ in
 	    answer = tailscaleIP;
 	    enabled = true;
 	  }
+	  {
+	    domain = "gatus.ts";
+	    answer = tailscaleIP;
+	    enabled = true;
+	  }
 	];
       };
     };
@@ -252,6 +341,12 @@ in
         extraConfig = ''
           tls internal
 	  reverse_proxy localhost:8082
+	'';
+      };
+      "gatus.ts" = {
+        extraConfig = ''
+          tls internal
+	  reverse_proxy localhost:8080
 	'';
       };
     };
