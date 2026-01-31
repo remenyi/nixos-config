@@ -13,7 +13,9 @@
       rpc-bind-address = "0.0.0.0";
       rpc-whitelist-enabled = false;
       rpc-host-whitelist-enabled = false;
-      download-dir = "/mnt/storage/torrents";
+      download-dir = "/mnt/storage/torrents/movies";
+      incomplete-dir = "/mnt/storage/torrents/incomplete";
+      incomplete-dir-enabled = true;
       umask = 2;
     };
   };
@@ -22,16 +24,17 @@
   services.prowlarr.enable = true;
 
   users.groups.media = { };
-  users.groups.radarr = { };
-  users.groups.prowlarr = { };
+
   users.users.transmission.extraGroups = [ "media" ];
   users.users.jellyfin.extraGroups = [ "media" "render" "video" ];
-  users.users.radarr = { isSystemUser = true; group = "radarr"; extraGroups = [ "media" ]; };
-  users.users.prowlarr = { isSystemUser = true; group = "prowlarr"; extraGroups = [ "media" ]; };
+  users.users.radarr.extraGroups = [ "media" ];
 
   systemd.tmpfiles.rules = [
-    "d /mnt/storage 0775 root media -"
-    "d /mnt/storage/torrents 2775 transmission media -"
-    "d /mnt/storage/radarr 2775 radarr media -"
+    "d /mnt/storage/torrents 0775 transmission media -"
+    "d /mnt/storage/torrents/movies 0775 transmission media -"
+    "d /mnt/storage/torrents/incomplete 0775 transmission media -"
+    "d /mnt/storage/media 0775 radarr media -"
+    "d /mnt/storage/media/movies 0775 radarr media -"
   ];
 }
+
