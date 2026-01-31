@@ -14,6 +14,18 @@ in
     ];
   };
 
+  services.radarr = {
+    enable = true;
+    settings.server.port = 7878;
+    openFirewall = false;
+  };
+
+  services.prowlarr = {
+    enable = true;
+    settings.server.port = 9696;
+    openFirewall = false;
+  };
+
   services.gatus = {
     enable = true;
     settings = {
@@ -77,6 +89,20 @@ in
           url = "https://nullpontmuhely.hu";
           interval = "1m";
           conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+        }
+	{
+          name = "Radarr";
+          url = "https://radarr.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+          client = { insecure = true; };
+        }
+        {
+          name = "Prowlarr";
+          url = "https://prowlarr.ts";
+          interval = "1m";
+          conditions = [ "[CONNECTED] == true" "[STATUS] == 200" ];
+          client = { insecure = true; };
         }
       ];
     };
@@ -204,6 +230,14 @@ in
   services.tailscale.enable = true;
 
   services.jellyfin.enable = true;
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      intel-vaapi-driver
+      libvpl            
+    ];
+  };
 
   services.transmission = {
     enable = true;
@@ -286,6 +320,16 @@ in
 	    answer = tailscaleIP;
 	    enabled = true;
 	  }
+          {
+	    domain = "radarr.ts";
+	    answer = tailscaleIP;
+	    enabled = true;
+	  }
+	  {
+	    domain = "prowlarr.ts";
+	    answer = tailscaleIP;
+	    enabled = true;
+	  }
 	];
       };
     };
@@ -294,14 +338,39 @@ in
   users.groups.media = { };
 
   users.users.transmission.extraGroups = [ "media" ];
-  users.users.jellyfin.extraGroups = [ "media" ];
+  users.users.jellyfin.extraGroups = [ "media" "render" "video" ];
+
+  users.groups.prowlarr = { };
+  users.users.prowlarr = {
+    isSystemUser = true;
+    group = "prowlarr";
+    extraGroups = [ "media" ];
+  }; 
+  users.groups.radarr = { };
+  users.users.radarr = {
+    isSystemUser = true;
+    group = "radarr";
+    extraGroups = [ "media" ];
+  };
+
+  systemd.services.radarr.serviceConfig = {
+    SupplementaryGroups = [ "media" ];
+    UMask = "0002";
+  };
+
+  systemd.services.transmission.serviceConfig = {
+    SupplementaryGroups = [ "media" ];
+  };
   
   systemd.tmpfiles.rules = [
-    "d /mnt/storage/torrents 0775 root media -"
-    "d /mnt/storage/torrents 0775 transmission media -"
+    "d /mnt/storage 0775 root media -"
+    "d /mnt/storage/torrents 2775 transmission media -"
+    "d /mnt/storage/torrents/radarr 2775 transmission media -"
     "d /mnt/storage/readeck 0700 root root -"
-  ]; 
-
+    "d /mnt/storage/radarr 2775 radarr media -"
+    "d /mnt/storage/prowlarr 2775 prowlarr media -"
+  ];
+  
   services.caddy = {
     enable = true;
     virtualHosts = {
@@ -348,6 +417,19 @@ in
           tls internal
 	  reverse_proxy localhost:8080
 	'';
+      };
+      "radarr.ts" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy localhost:7878
+        '';
+      };
+
+      "prowlarr.ts" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy localhost:9696
+        '';
       };
     };
   };
