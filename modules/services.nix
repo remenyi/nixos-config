@@ -53,6 +53,13 @@ let
       icon = "prowlarr.png";
       desc = "Indexelő";
     };
+    jellyseerr = {
+      dns = "jellyseerr.ts";
+      port = 5055;
+      category = "Média";
+      icon = "jellyseerr.png";
+      desc = "Igénykezelő";
+    };
     gatus = {
       dns = "gatus.ts";
       port = 8080;
@@ -66,7 +73,6 @@ let
       category = "Utils";
       icon = "readeck.png";
       desc = "Könyvjelzők";
-      extraDns = "readeck.home";
     };
     syncthing = {
       dns = "syncthing.ts";
