@@ -39,6 +39,13 @@ let
       icon = "radarr.png";
       desc = "Filmek";
     };
+    sonarr = { 
+      dns = "sonarr.ts";
+      port = 8989;
+      category = "Média";
+      icon = "sonarr.png";
+      desc = "Sorozatok";
+    };
     prowlarr = {
       dns = "prowlarr.ts";
       port = 9696;
