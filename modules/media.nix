@@ -24,13 +24,24 @@
   services.prowlarr.enable = true;
   services.sonarr.enable = true;
   services.jellyseerr.enable = true;
+  services.bazarr.enable = true;
 
+  systemd.services.bazarr.serviceConfig = {
+    ProtectHome = "no";
+    ReadWritePaths = [ "/mnt/storage/media" ];
+    UMask = "0002";
+  };
+
+  systemd.services.radarr.serviceConfig.UMask = "0002";
+  systemd.services.sonarr.serviceConfig.UMask = "0002";
+  
   users.groups.media = { };
 
   users.users.transmission.extraGroups = [ "media" ];
   users.users.jellyfin.extraGroups = [ "media" "render" "video" ];
   users.users.radarr.extraGroups = [ "media" ];
   users.users.sonarr.extraGroups = [ "media" ];
+  users.users.bazarr.extraGroups = [ "media" ];
 
   systemd.tmpfiles.rules = [
     "d /mnt/storage/torrents 0775 transmission media -"

@@ -1,4 +1,4 @@
-{ config, lib, myServices, tailscaleIP, ... }:
+{config, lib, myServices, tailscaleIP, ... }:
 
 {
   services.tailscale.enable = true;
@@ -32,6 +32,16 @@
 	    answer = "192.168.0.123";
 	    enabled = true;
 	  }
+	  {
+	    domain = "jellyfin.home";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
+	  {
+	    domain = "jellyseerr.home";
+	    answer = "192.168.0.123";
+	    enabled = true;
+	  }
 	];
       };
     };
@@ -50,6 +60,18 @@
         extraConfig = ''
 	  tls internal
 	  reverse_proxy localhost:${toString myServices.readeck.port}
+	'';
+      };
+      "jellyfin.home" = {
+        extraConfig = ''
+	  tls internal
+	  reverse_proxy localhost:${toString myServices.jellyfin.port}
+	'';
+      };
+      "jellyseerr.home" = {
+        extraConfig = ''
+	  tls internal
+	  reverse_proxy localhost:${toString myServices.jellyseerr.port}
 	'';
       };
     };

@@ -46,6 +46,13 @@ let
       icon = "sonarr.png";
       desc = "Sorozatok";
     };
+    bazarr = { 
+      dns = "bazarr.ts";
+      port = 6767;
+      category = "Média";
+      icon = "bazarr.png";
+      desc = "Feliratok";
+    };
     prowlarr = {
       dns = "prowlarr.ts";
       port = 9696;
